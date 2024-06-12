@@ -25,9 +25,8 @@ public class PlayerStatsQB extends TestBase {
         driver.get("https://www.nfl.com/stats/player-stats");
         String pageTitle = driver.getTitle();
         System.out.println("Page Title is: " + pageTitle);
-        assertEquals(pageTitle, "NFL 2022 Player Stats | passing Stats | NFL.com");
-        acceptCookiesPolicy(driver);
-
+        assertEquals(pageTitle, "NFL 2024 Player Stats | passing Stats | NFL.com");
+        rejectCookiesPolicy(driver);
 
         List<String> rowData;
         ArrayList<List<String>> playerData = new ArrayList<>();
@@ -64,10 +63,11 @@ public class PlayerStatsQB extends TestBase {
         String CSV_File_Path = "./target/csv/" + filename + ".csv";
         // Write the file
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(CSV_File_Path));
-        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT
+        CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.builder()
+                .setDelimiter(",")
+                .build()
                 .withRecordSeparator(recordSeparator));
-        //.withDelimiter(' '));
-        //.withHeader("Player Name"));
+                //.withHeader("Player Name"));
 
         // Push the values into the file
         // csvPrinter.printRecord("TEST");
