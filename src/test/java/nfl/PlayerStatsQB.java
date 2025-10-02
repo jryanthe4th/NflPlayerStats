@@ -33,7 +33,7 @@ public class PlayerStatsQB extends TestBase {
 
         do {
 
-            // Each page, grab new data in the table, or we'll hit 'state element' error
+            // Each page, grab new data in the table, or we'll hit 'stale element' error
             List<WebElement> playerRows = driver.findElements(By.xpath("//table/tbody/tr"));
 
             rowData = playerRows.stream()
@@ -65,14 +65,14 @@ public class PlayerStatsQB extends TestBase {
         BufferedWriter writer = Files.newBufferedWriter(Paths.get(CSV_File_Path));
         CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT.builder()
                 .setDelimiter(",")
-                .build()
-                .withRecordSeparator(recordSeparator));
+                .setRecordSeparator(recordSeparator)
+                .build());
                 //.withHeader("Player Name"));
 
         // Push the values into the file
-        // csvPrinter.printRecord("TEST");
         csvPrinter.printRecords(data);
         csvPrinter.flush();
         csvPrinter.close();
     }
+
 }
