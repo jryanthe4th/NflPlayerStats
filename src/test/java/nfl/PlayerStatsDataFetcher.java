@@ -19,20 +19,48 @@ import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 
-public class PlayerStatsRefactoredQB extends TestBase {
+/**
+ * Script to scrape data from NFL.com player stat categories
+ * and put data into a CSV
+ */
+public class PlayerStatsDataFetcher extends TestBase {
 
+    // Define stat category and year to scrape
+    private static final String STAT_CATEGORY = "Passing";
+    private static final Integer YEAR = 2024;
+
+    // Site URL
     private static final String URL = "https://www.nfl.com/stats/player-stats";
+
+    // Xpath
     private static final String PLAYER_ROWS_XPATH = "//table/tbody/tr";
     private static final String NEXT_BUTTON_XPATH = "//a[@title='Next Page' and not(contains(@class,'nfl-o-table-pagination__disabled'))]";
 
     @Test
     public void getPlayerNames() throws IOException, InterruptedException {
 
+        // Navigate to URL
         driver.get(URL);
         String pageTitle = driver.getTitle();
         System.out.println("Page Title is: " + pageTitle);
         assertEquals(pageTitle, "NFL 2025 Player Stats | passing Stats | NFL.com");
         rejectCookiesPolicy(driver);
+
+        // Select stat category
+        By statCategoryXpath = By.xpath("//a[text()='" + STAT_CATEGORY + "']");
+        driver.findElement(statCategoryXpath).click();
+        assertEquals(driver.findElement(statCategoryXpath).getText(), STAT_CATEGORY);
+
+        // Select year
+        driver.findElement(By.xpath("//label[text()='Year']/following-sibling::select")).click();
+        driver.findElement(By.xpath("//option[text()='" + YEAR + "']")).click();
+
+        // Wait for DOM ready state
+        waitUntilPageLoaded();
+
+        // Confirm selected year
+        pageTitle = driver.getTitle();
+        assertEquals(pageTitle, YEAR + " NFL " + STAT_CATEGORY.toLowerCase() + " stats - Players | NFL.com");
 
         List<String> playerData = new ArrayList<>();
 
@@ -51,18 +79,20 @@ public class PlayerStatsRefactoredQB extends TestBase {
             if (nextButtons.isEmpty()) {
                 break; // No more pages
             }
-            // NFL page will reload the same data repeatedly unless we wait a bit
-            Thread.sleep(5000);
+
             nextButtons.getFirst().click();
 
             // Wait for DOM ready state
             waitUntilPageLoaded();
 
+            // NFL page will reload the same data repeatedly unless we wait a bit
+            Thread.sleep(5000);
+
         } while (true);
 
         System.out.println(playerData);
 
-        writeCSVFile(playerData, "PlayerStats-QB-refactoredFile", "\n");
+        writeCSVFile(playerData, "PlayerStats-" + STAT_CATEGORY + "-" + YEAR, "\n");
     }
 
     private void writeCSVFile(List<String> data, String filename, String recordSeparator) throws IOException {

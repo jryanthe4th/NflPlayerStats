@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 
-public class PlayerStatsQB extends TestBase {
+public class PlayerStatsQB_OLD extends TestBase {
 
     @Test
     public void getPlayerNames() throws IOException {
