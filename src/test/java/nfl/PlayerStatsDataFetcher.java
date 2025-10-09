@@ -1,5 +1,6 @@
 package nfl;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.openqa.selenium.By;
@@ -23,11 +24,12 @@ import static org.testng.Assert.assertEquals;
  * Script to scrape data from NFL.com player stat categories
  * and put data into a CSV
  */
+@Log4j2
 public class PlayerStatsDataFetcher extends TestBase {
 
     // Define stat category and year to scrape
-    private static final String STAT_CATEGORY = "Passing";
-    private static final Integer YEAR = 2024;
+    private static final String STAT_CATEGORY = "Rushing";
+    private static final Integer YEAR = 2021;
 
     // Site URL
     private static final String URL = "https://www.nfl.com/stats/player-stats";
@@ -42,7 +44,7 @@ public class PlayerStatsDataFetcher extends TestBase {
         // Navigate to URL
         driver.get(URL);
         String pageTitle = driver.getTitle();
-        System.out.println("Page Title is: " + pageTitle);
+        log.info("Page Title is: {}", pageTitle);
         assertEquals(pageTitle, "NFL 2025 Player Stats | passing Stats | NFL.com");
         rejectCookiesPolicy(driver);
 
@@ -89,8 +91,8 @@ public class PlayerStatsDataFetcher extends TestBase {
             Thread.sleep(5000);
 
         } while (true);
-
-        System.out.println(playerData);
+        
+        log.info("playerData: {}", playerData);
 
         writeCSVFile(playerData, "PlayerStats-" + STAT_CATEGORY + "-" + YEAR, "\n");
     }
